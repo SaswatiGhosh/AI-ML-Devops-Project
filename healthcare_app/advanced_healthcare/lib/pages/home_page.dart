@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:advanced_healthcare/pages/feature_cards.dart';
 import 'package:advanced_healthcare/pages/symptom_checker.dart';
-import 'package:advanced_healthcare/pages/settings.dart';
+import 'package:advanced_healthcare/pages/doctors_appointment.dart';
 import 'package:advanced_healthcare/pages/upload_lab_records.dart';
 import 'package:advanced_healthcare/pages/offline_records.dart';
 
@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                     FeatureCard(title: "Symptom Checker", icon: Icons.health_and_safety,onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SymptomCheckerPage())), ),
                     FeatureCard(title: "Upload Lab Report", icon: Icons.upload_file , onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => UploadLabReport())),),
                     FeatureCard(title: "Offline Records", icon: Icons.folder_off , onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => OfflineRecords())),),
-                    FeatureCard(title: "Settings", icon: Icons.settings , onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => Settings())),),
+                    FeatureCard(title: "Doctors appointment", icon: Icons.medical_services_outlined , onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DoctorsAppointment())),),
                     ],
               )
               
