@@ -51,8 +51,7 @@ dev_dependencies:
   file_picker: ^10.2.0 # latest version as of mid-2025
   http: ^0.13.6         # for sending the file to a backend (optional)
   shared_preferences: ^2.2.2
-  
-
+  open_file: ^3.5.10
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
