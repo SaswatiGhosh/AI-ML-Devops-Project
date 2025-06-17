@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:advanced_healthcare/pages/offline_records.dart';
 
 
 class UploadLabReport extends StatefulWidget {
@@ -22,6 +24,10 @@ class _UploadLabReportState extends State<UploadLabReport> {
     if (result != null && result.files.single.path != null) {
       File file= File(result.files.single.path!);
       String name= result.files.single.name;
+
+      final prefs= await SharedPreferences.getInstance();
+      await prefs.setString('offline_file_path', file.path);
+      await prefs.setString('offline_file_name' , name);
       setState(() {
         _selectedFile = file;
         _fileName = name;
@@ -79,9 +85,12 @@ Future<void> _uploadFile() async {
               if (_fileName != null)
                 Text('Selected file: $_fileName'),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _pickFile,
-                child: const Text('Pick File'),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                  onPressed: _pickFile,
+                  child: const Text('Pick File'),
+                ),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
