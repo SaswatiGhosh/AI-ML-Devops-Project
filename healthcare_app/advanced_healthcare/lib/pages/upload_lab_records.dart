@@ -18,30 +18,35 @@ class _UploadLabReportState extends State<UploadLabReport> {
 
   // Picks a file using the File Picker
   Future<void> _pickFile() async {
-    final result = await FilePicker.platform.pickFiles();
+    final result = await FilePicker.platform.pickFiles(
+      allowedExtensions: ['pdf', 'docx', 'png'],
+      type: FileType.custom,
+    );
 
     if (result != null && result.files.single.path != null) {
       File file = File(result.files.single.path!);
       String name = result.files.single.name;
 
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('offline_file_path', file.path);
-      await prefs.setString('offline_file_name', name);
+      
+      // await prefs.setString('offline_file_path', file.path);
+      // await prefs.setString('offline_file_name', name);
       setState(() {
         _selectedFile = file;
         _fileName = name;
       });
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => OfflineRecords(file: file, fileName: name),
-        ),
-      );
     }
   }
 
   Future<void> _uploadFile() async {
     if (_selectedFile == null) return;
+    final name = _fileName!;
+    final file = _selectedFile!;
+    final path=file.path;
+
+    final prefs = await SharedPreferences.getInstance();
+    List<String> storedPaths = prefs.getStringList('uploaded_files') ?? [];
+    storedPaths.add('$name|${file.path}');// Store as "name|path"
+    await prefs.setStringList('uploaded_files', storedPaths);
 
     final uri = Uri.parse('https://your-api-endpoint.com/upload');
 
@@ -54,50 +59,43 @@ class _UploadLabReportState extends State<UploadLabReport> {
     // Send the request
 
     var response = await request.send();
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('File uploaded successfully!')),
-      );
-    } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Failed to upload file.')));
-    }
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          response.statusCode == 200
+              ? 'File uploaded successfully!'
+              : 'Failed to upload file.',
+        ),
+      ),
+    );
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: Text("Upload Lab Records"),
-      backgroundColor: const Color.fromARGB(255, 218, 89, 241),
-    ),
-    body: SafeArea(
-      child: Column(
-        children: [
-          SizedBox(height: 20),
-          Text(
-            "Upload your lab reports here",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (_fileName != null) Text('Selected file: $_fileName'),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        onPressed: _pickFile,
-                        child: const Text('Pick File'),
-                      ),
-                    ),
-                  ],
-                ),
+  Widget build(BuildContext context) => 
+  Scaffold(
+      appBar: AppBar(title: const Text("Upload Lab Records"), backgroundColor: const Color.fromARGB(255, 134, 115, 244),),
+      
+      body:SafeArea(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+          const  Text("Upload your lab reports here",style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+            const SizedBox(height: 30,),
+            if (_fileName != null)
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                      Text('Selected file: $_fileName'),
+                      const SizedBox(height: 20),
+                      
+                    ],
+                  ),
+              ),
+          
                 // if (_fileName != null)
                 //   Text('Selected file: $_fileName'),
                 // const SizedBox(height: 20),
@@ -109,8 +107,15 @@ class _UploadLabReportState extends State<UploadLabReport> {
                 //   ),
                 // ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: _pickFile,
+                        child: const Text('Pick File'),
+                      ),
+                    ),
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: _selectedFile != null ? _uploadFile : null,
@@ -121,8 +126,7 @@ class _UploadLabReportState extends State<UploadLabReport> {
               ],
             ),
           ),
-        ],
-      ),
-    ),
-  );
+    )
+      
+      );
 }

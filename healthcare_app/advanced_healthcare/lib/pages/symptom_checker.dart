@@ -15,8 +15,9 @@ class _SymptomCheckerPageState extends State<SymptomCheckerPage> {
   @override
   Widget build(BuildContext context) => 
   Scaffold(
-    appBar: AppBar(title: Text("Symptom Checker"), backgroundColor: const Color.fromARGB(255, 218, 89, 241),), 
-    body: SafeArea(
+      appBar: AppBar(title: const Text("Symptom Checker"), backgroundColor: const Color.fromARGB(255, 134, 115, 244),),
+      
+      body:SafeArea(
       child: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -41,11 +42,10 @@ class _SymptomCheckerPageState extends State<SymptomCheckerPage> {
               children : [
               ElevatedButton(
               onPressed: () {},
-              style:ElevatedButton.styleFrom(backgroundColor : Colors.purple[100]),
               child: Text("Submit"),
             ),
               ElevatedButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DoctorsAppointment())),
-              style:ElevatedButton.styleFrom(backgroundColor:  Colors.purple[100]),
+              // style:ElevatedButton.styleFrom(backgroundColor:  Colors.purple[100]),
               child: Text("Doctor Appointment"),
               )
             ]
@@ -57,9 +57,14 @@ class _SymptomCheckerPageState extends State<SymptomCheckerPage> {
         ],
       )
     )
-    )
+  ),
+  bottomNavigationBar: BottomNavigationBar(items:[ const 
+      BottomNavigationBarItem(icon: Icon(Icons.home),label: 'Home'),
+      BottomNavigationBarItem(icon: Icon(Icons.settings),label: 'Settings'),
+      BottomNavigationBarItem(icon: Icon(Icons.question_answer),label: 'Help'),
+      ]
+      )
   );
-  
 }
 
 

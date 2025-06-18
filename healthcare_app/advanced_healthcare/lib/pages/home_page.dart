@@ -18,11 +18,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+
+
   Widget build(BuildContext context) {
-    return Scaffold
-    (
-      backgroundColor: Colors.grey[300],
-      body:SafeArea
+    return Scaffold(
+      body: SafeArea
       (
         child: Column(
           children: 
@@ -126,15 +126,14 @@ class _HomePageState extends State<HomePage> {
         
         
         ]
-        ) 
-      ), 
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(items:[ const 
       BottomNavigationBarItem(icon: Icon(Icons.home),label: 'Home'),
       BottomNavigationBarItem(icon: Icon(Icons.settings),label: 'Settings'),
       BottomNavigationBarItem(icon: Icon(Icons.question_answer),label: 'Help'),
       ]
-        ),
-      
+      )
       );
-    }
+  }
 }

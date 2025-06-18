@@ -52,8 +52,14 @@ dev_dependencies:
   http: ^0.13.6         # for sending the file to a backend (optional)
   shared_preferences: ^2.2.2
   open_file: ^3.5.10
+  flutter_launcher_icons: ^0.14.3
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon/icon.png"
 
 # The following section is specific to Flutter packages.
 flutter:

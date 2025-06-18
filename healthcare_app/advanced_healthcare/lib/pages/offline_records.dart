@@ -3,79 +3,65 @@ import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:open_file/open_file.dart';
+import 'package:advanced_healthcare/pages/upload_lab_records.dart';
 
 class OfflineRecords extends StatelessWidget {
-  final File? file;
-  final String? fileName;
 
-  const OfflineRecords({super.key, this.file, this.fileName});
-  Future<Map<String, dynamic>> _loadSavedFile() async {
+  const OfflineRecords({super.key});
+  Future<List<Map<String, String>>> _loadAllSavedFile() async 
+  {
     final prefs = await SharedPreferences.getInstance();
-    final path = prefs.getString('offline_file_path');
-    final name = prefs.getString('offline_file_name');
-
-    print("Loaded path: $path");
-    print("Loaded name: $name");
-
-    if (path != null && name != null && File(path).existsSync()) {
-      return {'file': File(path), 'fileName': name};
-    } else {
-      return {'file': null, 'fileName': null};
-    }
+    List<String> stored = prefs.getStringList('uploaded_files') ?? [];
+    return stored.map((entry) {
+        final parts = entry.split('|');
+        return {'name': parts[0], 'path': parts[1]};
+      }).toList();
   }
+  
+
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: file != null && fileName != null
-          ? Future.value({'file': file, 'fileName': fileName})
-          : _loadSavedFile(),
+    return Scaffold(
+      appBar: AppBar(title: const Text('Offline Records'),backgroundColor: const Color.fromARGB(255, 134, 115, 244),),
+      body:FutureBuilder<List<Map<String, String>>>(
 
+      future: _loadAllSavedFile(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+          return const Center(child: CircularProgressIndicator(),
           );
         }
-        final file = snapshot.data!['file'] as File?;
-        final fileName = snapshot.data!['fileName'] as String?;
+        final files = snapshot.data!;
+        if (files.isEmpty){
+          return const Center(child: Text("No files uploaded"));
+        }
+        return ListView.separated(
 
-        final isFile =
-            fileName != null &&
-            (fileName.endsWith(".pdf") ||
-                fileName.endsWith(".docx") ||
-                fileName.endsWith("png"));
-        return Scaffold(
-          appBar: AppBar(title: const Text("Offline Records")),
-          body: Center(
-            child: file == null || fileName == null
-                ? const Text("No file uploaded", style: TextStyle(fontSize: 18))
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "File Name: $fileName",
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      const SizedBox(height: 20),
-                      isFile
-                          ? const Icon(
-                              Icons.description,
-                              size: 100,
-                            ) // 📄 icon for docx/pdf
-                          : const Text("Unsupported file type"),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (file != null) OpenFile.open(file.path);
-                        },
-                        child: const Text("Back"),
-                      ),
-                    ],
-                  ),
-          ),
-        );
+          itemCount: files.length,
+          separatorBuilder: (BuildContext context, int index) => const Divider(),
+          itemBuilder: (context,index){
+            final filename=files[index]['name']!;
+            final filepath=files[index]['path']!;
+            final file=File(filepath);
+            return ListTile(
+              leading: const Icon(Icons.insert_drive_file),
+              title: Text(filename),
+              onTap: () {
+                  OpenFile.open(filepath);
+                },
+
+            );
+          }
+          );
       },
+      ),
+      bottomNavigationBar: BottomNavigationBar(items:[ const 
+      BottomNavigationBarItem(icon: Icon(Icons.home),label: 'Home'),
+      BottomNavigationBarItem(icon: Icon(Icons.settings),label: 'Settings'),
+      BottomNavigationBarItem(icon: Icon(Icons.question_answer),label: 'Help'),
+      ]
+      )
     );
   }
 }
